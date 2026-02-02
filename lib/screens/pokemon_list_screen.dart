@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/pokemon.dart';
 import '../services/pokemon_service.dart';
 import '../services/pokemon_service_dio.dart';
+import 'pokemon_detail_screen.dart';
 
 /// หน้าจอแสดงรายการ Pokemon
 /// สามารถสลับระหว่าง HTTP และ Dio ได้
@@ -232,52 +233,61 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
   }
 
   Widget _buildPokemonCard(Pokemon pokemon) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(8),
-        leading: Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(8),
+  return Card(
+    margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+    elevation: 2,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: ListTile(
+      contentPadding: const EdgeInsets.all(8),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PokemonDetailScreen(pokemon: pokemon),
           ),
-          child: Image.network(
-            pokemon.imageUrl,
-            fit: BoxFit.contain,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: _useDio ? Colors.blue : Colors.red,
-                ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return const Icon(Icons.catching_pokemon, size: 40, color: Colors.grey);
-            },
-          ),
+        );
+      },
+      // ----------------------
+      leading: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(8),
         ),
-        title: Text(
-          pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        subtitle: Text(
-          '#${pokemon.id.toString().padLeft(3, '0')}',
-          style: TextStyle(color: Colors.grey[600], fontSize: 14),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: _useDio ? Colors.blue : Colors.red,
+        child: Image.network(
+          pokemon.imageUrl,
+          fit: BoxFit.contain,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: _useDio ? Colors.blue : Colors.red,
+              ),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return const Icon(Icons.catching_pokemon, size: 40, color: Colors.grey);
+          },
         ),
       ),
-    );
-  }
+      title: Text(
+        pokemon.name[0].toUpperCase() + pokemon.name.substring(1),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      ),
+      subtitle: Text(
+        '#${pokemon.id.toString().padLeft(3, '0')}',
+        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+      ),
+      trailing: Icon(
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: _useDio ? Colors.blue : Colors.red,
+      ),
+    ),
+  );
+}
 }
